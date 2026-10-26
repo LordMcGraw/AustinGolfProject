@@ -2,9 +2,7 @@ name: Check tee times
 
 on:
   schedule:
-    # Every 30 minutes, 6 am to 10 pm Austin time (UTC-5/-6). Keeps a private repo
-    # inside the free 2,000 Actions minutes a month. GitHub may start runs a few minutes late.
-    - cron: "*/30 0-3,11-23 * * *"
+    - cron: "*/15 * * * *"  # GitHub may start scheduled runs a few minutes late
   workflow_dispatch:
 
 concurrency:

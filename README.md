@@ -5,7 +5,7 @@ matching his search opens up.
 
 ## What it does
 
-Every 30 minutes from about 6 am to 10 pm, a GitHub Actions job (`.github/workflows/check-tee-times.yml`):
+Every 15 minutes, a GitHub Actions job (`.github/workflows/check-tee-times.yml`):
 
 1. Reads open tee times for the next 8 days from each course's booking site.
 2. Adds the National Weather Service forecast for each tee time, and a course-conditions
