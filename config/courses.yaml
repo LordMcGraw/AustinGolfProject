@@ -6,11 +6,12 @@ courses:
   # City of Austin munis book through the city's WebTrac tee sheet (Golf ATX).
   - id: lions
     name: Lions Municipal
-    platform: webtrac
+    platform: golfnow
+    golfnow_facility: 834
     lat: 30.2873
     lon: -97.7745
     booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
-    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+    notes: City muni. Checked on GolfNow only, which gets few or none of its times; the full tee sheet is on the city site. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
   - id: morris-williams
     name: Morris Williams
     platform: webtrac
@@ -27,11 +28,12 @@ courses:
     notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
   - id: roy-kizer
     name: Roy Kizer
-    platform: webtrac
+    platform: golfnow
+    golfnow_facility: 590
     lat: 30.1810
     lon: -97.7360
     booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
-    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+    notes: City muni. Checked on GolfNow only, which gets few or none of its times; the full tee sheet is on the city site. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
   - id: hancock
     name: Hancock
     platform: webtrac
