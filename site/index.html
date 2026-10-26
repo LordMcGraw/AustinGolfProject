@@ -39,16 +39,18 @@
   th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
   th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
   tr:last-child td { border-bottom: none; }
-  .c-time { width: 88px; } .c-plyr { width: 68px; } .c-price { width: 64px; } .c-book { width: 62px; }
+  .c-time { width: 88px; } .c-plyr { width: 68px; } .c-price { width: 64px; } .c-book { width: 118px; }
   td { overflow-wrap: anywhere; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .rain { color: var(--rain); }
+  td.where a { display: inline-block; }
+  a.alt { display: block !important; font-size: 12px; color: var(--muted); margin-top: 3px; }
   a.book { background: var(--accent); color: var(--accent-text); text-decoration: none; padding: 4px 10px; border-radius: 8px; font-size: 13px; white-space: nowrap; }
   .empty { color: var(--muted); padding: 20px 0; }
   .status { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .status div { font-size: 13px; }
   .status .name { font-weight: 600; }
-  .status .name a { color: var(--text); }
+  .status .name a.alt-inline { font-weight: 400; font-size: 12px; color: var(--accent); margin-left: 6px; }
   .status .msg { color: var(--muted); }
   .status .bad { color: var(--warn); }
   details summary { cursor: pointer; font-weight: 600; }
@@ -58,7 +60,7 @@
     th.hide-sm, td.hide-sm, col.hide-sm { display: none; }
     th, td { padding: 7px 5px; font-size: 14px; }
     a.book { padding: 4px 8px; }
-    .c-time { width: 76px; } .c-plyr { width: 46px; } .c-price { width: 46px; } .c-book { width: 56px; }
+    .c-time { width: 76px; } .c-plyr { width: 46px; } .c-price { width: 46px; } .c-book { width: 92px; }
     th { font-size: 11px; }
   }
 </style>
@@ -66,7 +68,7 @@
 <body>
 <main>
   <h1>Austin Tee Times</h1>
-  <p class="sub" id="updated">Loading…</p>
+  <p class="sub"><span id="updated">Loading…</span><br>View only. Each tee time links to the site where you book it.</p>
 
   <section class="card">
     <div class="filters">
@@ -126,6 +128,12 @@ function fmtDate(d) {
   const [y, m, day] = d.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, day)).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" });
 }
+function siteName(url) {
+  const host = (() => { try { return new URL(url).hostname; } catch (e) { return ""; } })();
+  if (host.includes("golfnow")) return "GolfNow";
+  if (host.includes("myvscloud")) return "City site";
+  return "Course site";
+}
 function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 function chip(container, key, label, on, onClick) {
@@ -157,6 +165,7 @@ function renderControls() {
 
 function renderResults() {
   const names = Object.fromEntries(data.courses.map(c => [c.id, c.name]));
+  const courseUrl = Object.fromEntries(data.courses.map(c => [c.id, c.booking_url]));
   const outlook = {};
   data.courses.forEach(c => (c.outlook || []).forEach(o => { if (!outlook[o.date]) outlook[o.date] = o; }));
   const rows = data.tee_times.filter(t => {
@@ -185,11 +194,13 @@ function renderResults() {
         <td class="num hide-sm">${t.holes}</td>
         <td class="num">${t.price != null ? "$" + Math.round(t.price) : "–"}</td>
         <td class="hide-sm">${weather}</td>
-        <td><a class="book" href="${esc(t.booking_url)}" target="_blank" rel="noopener">Book</a></td>
+        <td class="where"><a class="book" href="${esc(t.booking_url)}" target="_blank" rel="noopener">${siteName(t.booking_url)} ↗</a>${
+          siteName(courseUrl[t.course_id]) !== siteName(t.booking_url)
+            ? `<a class="alt" href="${esc(courseUrl[t.course_id])}" target="_blank" rel="noopener">or ${siteName(courseUrl[t.course_id])}</a>` : ""}</td>
       </tr>`;
     }).join("");
     return `<div class="day"><h2>${fmtDate(d)}</h2><span class="wx">${wx}</span><span class="wx">${byDate[d].length} times</span></div>
-      <table><colgroup><col class="c-time"><col><col class="c-plyr"><col class="hide-sm" style="width:56px"><col class="c-price"><col class="hide-sm" style="width:34%"><col class="c-book"></colgroup><thead><tr><th>Time</th><th>Course</th><th>Plyrs</th><th class="hide-sm">Holes</th><th>Price</th><th class="hide-sm">Weather</th><th></th></tr></thead>
+      <table><colgroup><col class="c-time"><col><col class="c-plyr"><col class="hide-sm" style="width:56px"><col class="c-price"><col class="hide-sm" style="width:34%"><col class="c-book"></colgroup><thead><tr><th>Time</th><th>Course</th><th>Plyrs</th><th class="hide-sm">Holes</th><th>Price</th><th class="hide-sm">Weather</th><th>Book at</th></tr></thead>
       <tbody>${body}</tbody></table>`;
   }).join("");
 }
@@ -209,7 +220,7 @@ function renderConditions(k) {
 
 function renderStatus() {
   document.getElementById("status").innerHTML = [...data.courses].sort((a, b) => (a.status !== "ok") - (b.status !== "ok")).map(c => `<div>
-    <div class="name"><a href="${esc(c.booking_url)}" target="_blank" rel="noopener">${esc(c.name)}</a></div>
+    <div class="name">${esc(c.name)} <a class="alt-inline" href="${esc(c.booking_url)}" target="_blank" rel="noopener">Book at ${siteName(c.booking_url)} ↗</a></div>
     <div class="${c.status === "ok" ? "msg" : "bad"}">${c.status === "ok" ? `${c.count} open times checked` : esc(c.message)}</div>
     ${c.notes ? `<div class="msg">${esc(c.notes)}</div>` : ""}
     ${renderConditions(c.conditions)}

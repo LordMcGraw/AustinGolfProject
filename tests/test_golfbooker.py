@@ -62,7 +62,7 @@ def test_email_lists_times_with_booking_links():
     assert msg["Subject"] == "Tee times open: Crystal Falls Sat 8:00 AM + 1 more"
     body = msg.get_content()
     assert body.index("8:00 AM") < body.index("9:00 AM")
-    assert "Book: https://www.golfnow.com/x" in body
+    assert "Book on GolfNow: https://www.golfnow.com/x" in body
 
 
 def test_conditions_summary_counts_recent_mentions():

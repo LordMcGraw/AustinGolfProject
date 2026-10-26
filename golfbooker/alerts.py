@@ -38,7 +38,15 @@ def format_line(tt: TeeTime, course: Course) -> str:
     price = f"${tt.price:.2f}" if tt.price is not None else "price n/a"
     w = tt.weather
     weather = f" | {w['temp_f']}°F, {w['summary']}, {w['precip_pct']}% rain" if w else ""
-    return f"{when} - {course.name} - {tt.holes} holes, {players} players, {price}{weather}\n  Book: {tt.booking_url}"
+    return f"{when} - {course.name} - {tt.holes} holes, {players} players, {price}{weather}\n  Book on {site_name(tt.booking_url)}: {tt.booking_url}"
+
+
+def site_name(url: str) -> str:
+    if "golfnow.com" in url:
+        return "GolfNow"
+    if "myvscloud.com" in url:
+        return "the city site"
+    return "the course site"
 
 
 def build_email(new: list[TeeTime], courses: dict[str, Course], to: str, sender: str, dashboard_url: str = "") -> EmailMessage:

@@ -59,4 +59,4 @@ python -m pytest
 
 - City munis: the city's WebTrac tee sheet and Chronogolf / EZLinks course sites block automated
   requests (Cloudflare). The checker doesn't try to get around that; those courses get booking links.
-- Booking itself stays manual: alerts and the dashboard link straight to the slot.
+- Booking: the dashboard and alerts are view only. Each tee time links to the site where you book it.
