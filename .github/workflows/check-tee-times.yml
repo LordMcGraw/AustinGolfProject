@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/15 * * * *"  # GitHub may start scheduled runs a few minutes late
   workflow_dispatch:
+    inputs:
+      test_email:
+        description: Send a test alert email with a few current matches
+        type: boolean
+        default: false
 
 concurrency:
   group: check-tee-times
@@ -45,7 +50,8 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           DASHBOARD_URL: ${{ vars.DASHBOARD_URL }}
-        run: python -m golfbooker.run
+          TEST_EMAIL: ${{ inputs.test_email && '--test-email' || '' }}
+        run: python -m golfbooker.run $TEST_EMAIL
 
       - name: Save alert history
         if: always()

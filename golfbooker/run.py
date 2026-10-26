@@ -25,6 +25,7 @@ ALERT_LOG = ROOT / "state" / "alerted.json"
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--no-email", action="store_true", help="print alerts instead of sending them")
+    parser.add_argument("--test-email", action="store_true", help="also email the next few matching times, to check alerts work")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -84,6 +85,15 @@ def main() -> None:
     alert_log = AlertLog(ALERT_LOG)
     new = alert_log.new([tt for tt in tee_times if matches(tt, search)])
     log.info("%d tee times, %d new matches", len(tee_times), len(new))
+    if args.test_email:
+        matching = [tt for tt in tee_times if matches(tt, search)][:3]
+        if matching:
+            by_id = {c.id: c for c in courses}
+            to = os.environ.get("ALERT_TO", "")
+            msg = build_email(matching, by_id, to, os.environ.get("SMTP_USER", to), os.environ.get("DASHBOARD_URL", ""))
+            msg.replace_header("Subject", "[Test] " + msg["Subject"])
+            send(msg, settings["alerts"])
+            log.info("Sent test email to %s", to)
     if first_run:
         # Don't flood the inbox with everything already open; alert on changes from here on.
         log.info("First run: remembering current matches without emailing")
