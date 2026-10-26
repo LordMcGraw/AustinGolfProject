@@ -17,8 +17,8 @@ Every 15 minutes, a GitHub Actions job (`.github/workflows/check-tee-times.yml`)
 
 | Courses | Source | Status |
 | --- | --- | --- |
-| Teravista, Falconhead, Avery Ranch, ShadowGlen, Star Ranch, Crystal Falls, Forest Creek, Riverside | GolfNow | Checked automatically |
-| Lions, Morris Williams, Jimmy Clay, Roy Kizer, Hancock | City WebTrac tee sheet | Booking link only. The city site blocks automated checks |
+| Lions, Roy Kizer (partial: times the city also lists on GolfNow), Teravista, Falconhead, Avery Ranch, ShadowGlen, Star Ranch, Crystal Falls, Forest Creek, Riverside | GolfNow | Checked automatically |
+| Morris Williams, Jimmy Clay, Hancock | City WebTrac tee sheet | Booking link only. The city site blocks automated checks |
 | Cimarron Hills | Private club | Booking link only |
 | Sun City (Cowan Creek, Legacy Hills, White Wing, Kurth-Landrum) | Unknown | Booking link only |
 
