@@ -8,7 +8,8 @@ matching his search opens up.
 Every 30 minutes from about 6 am to 10 pm, a GitHub Actions job (`.github/workflows/check-tee-times.yml`):
 
 1. Reads open tee times for the next 8 days from each course's booking site.
-2. Adds the National Weather Service forecast for each tee time.
+2. Adds the National Weather Service forecast for each tee time, and a course-conditions
+   snapshot (conditions rating, recent review excerpts, topics players mention) from GolfNow reviews.
 3. Publishes the dashboard (`site/`) to GitHub Pages.
 4. Emails any newly opened tee times that match `config/settings.yaml`.
 
@@ -53,3 +54,9 @@ python -m golfbooker.run --no-email   # prints the alert email instead of sendin
 python -m http.server -d site 8000    # dashboard at http://localhost:8000
 python -m pytest
 ```
+
+## Not automated
+
+- City munis: the city's WebTrac tee sheet and Chronogolf / EZLinks course sites block automated
+  requests (Cloudflare). The checker doesn't try to get around that; those courses get booking links.
+- Booking itself: alerts link straight to the slot. GolfNow's terms don't allow automated booking.

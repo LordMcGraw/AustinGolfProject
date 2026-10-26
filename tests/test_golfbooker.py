@@ -63,3 +63,21 @@ def test_email_lists_times_with_booking_links():
     body = msg.get_content()
     assert body.index("8:00 AM") < body.index("9:00 AM")
     assert "Book: https://www.golfnow.com/x" in body
+
+
+def test_conditions_summary_counts_recent_mentions():
+    from golfbooker.conditions import summarize
+
+    collection = {
+        "subratings": [{"label": "Course Conditions", "value": 3.975}],
+        "reviews": [
+            {"reviewDate": "2026-10-20T10:00:00", "dateOfPlay": "2026-10-19T00:00:00", "rating": 3,
+             "reviewTitle": "Greens punched", "reviewText": "Greens were just aerated and sanded."},
+            {"reviewDate": "2026-05-01T10:00:00", "rating": 5, "reviewText": "Greens perfect."},  # too old
+        ],
+    }
+    snap = summarize(collection, today=datetime(2026, 10, 26))
+    assert snap["conditions_rating"] == 4.0
+    assert snap["recent_count"] == 1
+    assert snap["mentions"] == {"greens": 1, "aeration": 1}
+    assert snap["reviews"][0]["played"] == "2026-10-19"

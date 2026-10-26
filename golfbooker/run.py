@@ -11,6 +11,7 @@ import os
 from datetime import timedelta
 
 from .alerts import AlertLog, build_email, now_local, send
+from .conditions import snapshot
 from .config import ROOT, load_courses, load_settings
 from .filters import matches
 from .readers import ReaderUnavailable, read_course
@@ -45,6 +46,7 @@ def main() -> None:
             "status": "ok",
             "message": "",
             "outlook": [],
+            "conditions": {},
         }
         try:
             found = [tt for tt in read_course(course, days, search.get("players", 1)) if tt.start >= now]
@@ -62,6 +64,10 @@ def main() -> None:
             row["outlook"] = forecasts.daily_outlook(course)
         except Exception:
             log.exception("weather failed for %s", course.name)
+        try:
+            row["conditions"] = snapshot(course)
+        except Exception:
+            log.exception("reviews failed for %s", course.name)
         log.info("%-28s %-12s %s", course.name, row["status"], row.get("count", row["message"]))
         course_rows.append(row)
 
