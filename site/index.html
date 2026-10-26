@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Austin Tee Times</title>
+<style>
+  :root {
+    --bg: #f6f7f4; --card: #ffffff; --text: #1d2420; --muted: #64706a; --line: #e2e6e0;
+    --accent: #1f6b45; --accent-text: #ffffff; --chip: #eef2ec; --warn: #9a5b00; --rain: #2b5ea8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121614; --card: #1b201d; --text: #e6ebe7; --muted: #94a19a; --line: #2c342f;
+      --accent: #4fb07d; --accent-text: #08130d; --chip: #252c28; --warn: #e0a54a; --rain: #7fb0f0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1100px; margin: 0 auto; padding: 20px 16px 60px; }
+  h1 { font-size: 24px; margin: 0 0 2px; }
+  .sub { color: var(--muted); margin: 0 0 18px; font-size: 13px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+  .filters { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .filters label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); background: var(--chip); color: var(--text); border-radius: 999px;
+          padding: 4px 10px; font-size: 13px; cursor: pointer; user-select: none; }
+  .chip.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  select, input[type=time] { font: inherit; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line);
+                             background: var(--card); color: var(--text); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .courses { grid-column: 1 / -1; }
+  .day { margin: 22px 0 8px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .day h2 { font-size: 17px; margin: 0; }
+  .day .wx { color: var(--muted); font-size: 13px; }
+  table { width: 100%; table-layout: fixed; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: none; }
+  .c-time { width: 88px; } .c-plyr { width: 68px; } .c-price { width: 64px; } .c-book { width: 62px; }
+  td { overflow-wrap: anywhere; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rain { color: var(--rain); }
+  a.book { background: var(--accent); color: var(--accent-text); text-decoration: none; padding: 4px 10px; border-radius: 8px; font-size: 13px; white-space: nowrap; }
+  .empty { color: var(--muted); padding: 20px 0; }
+  .status { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .status div { font-size: 13px; }
+  .status .name { font-weight: 600; }
+  .status .msg { color: var(--muted); }
+  .status .bad { color: var(--warn); }
+  details summary { cursor: pointer; font-weight: 600; }
+  @media (max-width: 640px) {
+    th.hide-sm, td.hide-sm, col.hide-sm { display: none; }
+    th, td { padding: 7px 5px; font-size: 14px; }
+    a.book { padding: 4px 8px; }
+    .c-time { width: 76px; } .c-plyr { width: 46px; } .c-price { width: 46px; } .c-book { width: 56px; }
+    th { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Austin Tee Times</h1>
+  <p class="sub" id="updated">Loading…</p>
+
+  <section class="card">
+    <div class="filters">
+      <div>
+        <label>Days</label>
+        <div class="chips" id="days"></div>
+      </div>
+      <div>
+        <label>Players</label>
+        <select id="players"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+      </div>
+      <div>
+        <label>Tee time between</label>
+        <div class="row"><input type="time" id="from"> and <input type="time" id="to"></div>
+      </div>
+      <div>
+        <label>Holes</label>
+        <select id="holes"><option value="">Any</option><option value="9">9</option><option value="18">18</option></select>
+      </div>
+      <div class="courses">
+        <label>Courses</label>
+        <div class="chips" id="courses"></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="results"></div>
+
+  <section class="card" style="margin-top:24px">
+    <details>
+      <summary>Courses and booking notes</summary>
+      <div class="status" id="status" style="margin-top:12px"></div>
+    </details>
+  </section>
+</main>
+<script>
+const DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+const DAY_LABELS = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
+const STORE = "teetime-filters-v1";
+let data, state;
+
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+function load() { try { return JSON.parse(localStorage.getItem(STORE)); } catch (e) { return null; } }
+
+// Tee times are stored with an Austin UTC offset; read the wall-clock parts directly.
+function parts(iso) {
+  const [d, t] = iso.split("T");
+  const [y, m, day] = d.split("-").map(Number);
+  return { date: d, hhmm: t.slice(0, 5), dow: DAY_KEYS[new Date(Date.UTC(y, m - 1, day)).getUTCDay()] };
+}
+function fmtTime(hhmm) {
+  let [h, m] = hhmm.split(":").map(Number);
+  const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+  return `${h}:${String(m).padStart(2, "0")} ${ap}`;
+}
+function fmtDate(d) {
+  const [y, m, day] = d.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, day)).toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric", timeZone: "UTC" });
+}
+function esc(s) { return String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function chip(container, key, label, on, onClick) {
+  const el = document.createElement("span");
+  el.className = "chip" + (on ? " on" : "");
+  el.textContent = label;
+  el.onclick = () => { onClick(key); };
+  container.appendChild(el);
+}
+
+function renderControls() {
+  const days = document.getElementById("days"); days.innerHTML = "";
+  ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].forEach(k =>
+    chip(days, k, DAY_LABELS[k], state.days.includes(k), key => {
+      state.days = state.days.includes(key) ? state.days.filter(x => x !== key) : [...state.days, key];
+      update();
+    }));
+  const courses = document.getElementById("courses"); courses.innerHTML = "";
+  data.courses.filter(c => c.status === "ok").forEach(c =>
+    chip(courses, c.id, c.name, !state.hiddenCourses.includes(c.id), key => {
+      state.hiddenCourses = state.hiddenCourses.includes(key) ? state.hiddenCourses.filter(x => x !== key) : [...state.hiddenCourses, key];
+      update();
+    }));
+  document.getElementById("players").value = state.players;
+  document.getElementById("from").value = state.from;
+  document.getElementById("to").value = state.to;
+  document.getElementById("holes").value = state.holes;
+}
+
+function renderResults() {
+  const names = Object.fromEntries(data.courses.map(c => [c.id, c.name]));
+  const outlook = {};
+  data.courses.forEach(c => (c.outlook || []).forEach(o => { if (!outlook[o.date]) outlook[o.date] = o; }));
+  const rows = data.tee_times.filter(t => {
+    const p = parts(t.start);
+    return state.days.includes(p.dow)
+      && t.min_players <= state.players && state.players <= t.max_players
+      && p.hhmm >= state.from && p.hhmm <= state.to
+      && (!state.holes || String(t.holes) === state.holes)
+      && !state.hiddenCourses.includes(t.course_id);
+  });
+  const byDate = {};
+  rows.forEach(t => { (byDate[parts(t.start).date] ||= []).push(t); });
+  const out = document.getElementById("results");
+  if (!rows.length) { out.innerHTML = `<p class="empty">No open tee times match these filters.</p>`; return; }
+  out.innerHTML = Object.keys(byDate).sort().map(d => {
+    const o = outlook[d];
+    const wx = o ? `${o.temp_f}°F · ${esc(o.summary)}${o.precip_pct ? ` · <span class="rain">${o.precip_pct}% rain</span>` : ""}` : "";
+    const body = byDate[d].map(t => {
+      const p = parts(t.start), w = t.weather || {};
+      const players = t.min_players === t.max_players ? t.min_players : `${t.min_players}–${t.max_players}`;
+      const weather = w.summary ? `${w.temp_f}°F ${esc(w.summary)}${w.precip_pct >= 20 ? ` <span class="rain">${w.precip_pct}%</span>` : ""}` : "";
+      return `<tr>
+        <td class="num">${fmtTime(p.hhmm)}</td>
+        <td>${esc(names[t.course_id])}</td>
+        <td class="num">${players}</td>
+        <td class="num hide-sm">${t.holes}</td>
+        <td class="num">${t.price != null ? "$" + Math.round(t.price) : "–"}</td>
+        <td class="hide-sm">${weather}</td>
+        <td><a class="book" href="${esc(t.booking_url)}" target="_blank" rel="noopener">Book</a></td>
+      </tr>`;
+    }).join("");
+    return `<div class="day"><h2>${fmtDate(d)}</h2><span class="wx">${wx}</span><span class="wx">${byDate[d].length} times</span></div>
+      <table><colgroup><col class="c-time"><col><col class="c-plyr"><col class="hide-sm" style="width:56px"><col class="c-price"><col class="hide-sm" style="width:34%"><col class="c-book"></colgroup><thead><tr><th>Time</th><th>Course</th><th>Plyrs</th><th class="hide-sm">Holes</th><th>Price</th><th class="hide-sm">Weather</th><th></th></tr></thead>
+      <tbody>${body}</tbody></table>`;
+  }).join("");
+}
+
+function renderStatus() {
+  document.getElementById("status").innerHTML = data.courses.map(c => `<div>
+    <div class="name"><a href="${esc(c.booking_url)}" target="_blank" rel="noopener">${esc(c.name)}</a></div>
+    <div class="${c.status === "ok" ? "msg" : "bad"}">${c.status === "ok" ? `${c.count} open times checked` : esc(c.message)}</div>
+    ${c.notes ? `<div class="msg">${esc(c.notes)}</div>` : ""}
+  </div>`).join("");
+}
+
+function update() { save(); renderControls(); renderResults(); }
+
+fetch("data/teetimes.json", { cache: "no-store" }).then(r => r.json()).then(d => {
+  data = d;
+  const s = d.search || {};
+  const win = (s.time_windows && s.time_windows[0]) || ["05:00", "21:00"];
+  state = Object.assign({
+    days: s.days || ["mon", "tue", "wed", "thu", "fri", "sat", "sun"],
+    players: s.players || 2, from: win[0], to: win[1], holes: "", hiddenCourses: [],
+  }, load() || {});
+  const when = new Date(d.generated_at);
+  document.getElementById("updated").textContent =
+    `${d.tee_times.length} open tee times · updated ${when.toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit", timeZone: "America/Chicago" })}`;
+  ["players", "from", "to", "holes"].forEach(id => document.getElementById(id).onchange = e => {
+    state[id] = id === "players" ? Number(e.target.value) : e.target.value; update();
+  });
+  update(); renderStatus();
+}).catch(() => { document.getElementById("updated").textContent = "Couldn't load tee time data."; });
+</script>
+</body>
+</html>

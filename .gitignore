@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# Generated on each run; published by the workflow, not committed.
+site/data/
+state/

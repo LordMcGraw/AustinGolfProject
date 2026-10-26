@@ -1,0 +1,138 @@
+# Courses the checker watches. `platform` picks the reader in golfbooker/readers.
+# Coordinates are approximate and only used to pull the weather forecast.
+# `notes` show on the dashboard next to each course.
+
+courses:
+  # City of Austin munis book through the city's WebTrac tee sheet (Golf ATX).
+  - id: lions
+    name: Lions Municipal
+    platform: webtrac
+    lat: 30.2873
+    lon: -97.7745
+    booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
+    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+  - id: morris-williams
+    name: Morris Williams
+    platform: webtrac
+    lat: 30.2963
+    lon: -97.6838
+    booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
+    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+  - id: jimmy-clay
+    name: Jimmy Clay
+    platform: webtrac
+    lat: 30.1840
+    lon: -97.7390
+    booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
+    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+  - id: roy-kizer
+    name: Roy Kizer
+    platform: webtrac
+    lat: 30.1810
+    lon: -97.7360
+    booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
+    notes: City muni. Weekend times open Monday 8 pm, online only. One tee time (up to 4 players) per account.
+  - id: hancock
+    name: Hancock
+    platform: webtrac
+    lat: 30.3020
+    lon: -97.7317
+    booking_url: https://txaustinweb.myvscloud.com/webtrac/web/search.html?display=detail&module=GR
+    notes: City muni, 9 holes. Weekend times open Monday 8 pm, online only.
+
+  # Daily-fee courses listed on GolfNow / TeeOff. Some keep part of their
+  # inventory on their own tee sheet (Forest Creek and Teravista on Chronogolf,
+  # Star Ranch on EZLinks), so GolfNow may show fewer times than the course site.
+  - id: teravista
+    name: Teravista
+    platform: golfnow
+    golfnow_facility: 99
+    lat: 30.5617
+    lon: -97.6516
+    booking_url: https://www.golfnow.com/tee-times/facility/99/search
+  - id: falconhead
+    name: Falconhead
+    platform: golfnow
+    golfnow_facility: 321
+    lat: 30.3307
+    lon: -97.9590
+    booking_url: https://www.golfnow.com/tee-times/facility/321/search
+  - id: avery-ranch
+    name: Avery Ranch
+    platform: golfnow
+    golfnow_facility: 206
+    lat: 30.4955
+    lon: -97.7660
+    booking_url: https://www.golfnow.com/tee-times/facility/206/search
+  - id: shadowglen
+    name: ShadowGlen
+    platform: golfnow
+    golfnow_facility: 591
+    lat: 30.3530
+    lon: -97.5480
+    booking_url: https://www.golfnow.com/tee-times/facility/591/search
+  - id: star-ranch
+    name: Star Ranch
+    platform: golfnow
+    golfnow_facility: 151
+    lat: 30.5265
+    lon: -97.5660
+    booking_url: https://www.golfnow.com/tee-times/facility/151/search
+  - id: crystal-falls
+    name: Crystal Falls
+    platform: golfnow
+    golfnow_facility: 5741
+    lat: 30.6125
+    lon: -97.8960
+    booking_url: https://www.golfnow.com/tee-times/facility/5741/search
+  - id: forest-creek
+    name: Forest Creek
+    platform: golfnow
+    golfnow_facility: 896
+    lat: 30.5300
+    lon: -97.6490
+    booking_url: https://www.golfnow.com/tee-times/facility/896/search
+  - id: cimarron-hills
+    name: Cimarron Hills
+    platform: unknown
+    lat: 30.6620
+    lon: -97.7450
+    booking_url: https://www.cimarronhills.com
+    notes: Private club (members site), not bookable on GolfNow.
+  - id: riverside
+    name: Riverside
+    platform: golfnow
+    golfnow_facility: 888
+    lat: 30.2230
+    lon: -97.6930
+    booking_url: https://www.golfnow.com/tee-times/facility/888/search
+
+  # Sun City Texas courses. Booking system and non-resident access not yet confirmed.
+  - id: cowan-creek
+    name: Cowan Creek (Sun City)
+    platform: unknown
+    lat: 30.6960
+    lon: -97.7520
+    booking_url: https://www.suncitytexas.org
+    notes: Non-resident access not yet confirmed.
+  - id: legacy-hills
+    name: Legacy Hills (Sun City)
+    platform: unknown
+    lat: 30.6960
+    lon: -97.7520
+    booking_url: https://www.suncitytexas.org
+    notes: Non-resident access not yet confirmed.
+  - id: white-wing
+    name: White Wing (Sun City)
+    platform: unknown
+    lat: 30.6960
+    lon: -97.7520
+    booking_url: https://www.suncitytexas.org
+    notes: Non-resident access not yet confirmed.
+  - id: kurth-landrum
+    name: Kurth-Landrum (Sun City)
+    platform: unknown
+    lat: 30.6960
+    lon: -97.7520
+    booking_url: https://www.suncitytexas.org
+    notes: Non-resident access not yet confirmed.

@@ -1,0 +1,52 @@
+{
+ "ttResults": {
+  "teeTimes": [
+   {
+    "time": {
+     "date": "2026-10-31T14:00:00+00:00",
+     "formatted": "2:00",
+     "formattedTimeMeridian": "PM",
+     "subscriptFormattedTimeMeridian": "<sup>PM</sup>"
+    },
+    "playerRule": "One",
+    "detailUrl": "/tee-times/facility/5741/tee-time/344191270",
+    "teeTimeRates": [
+     {
+      "holeCount": 18,
+      "playerRule": "One",
+      "detailUrl": "/tee-times/facility/5741/tee-time/344191270",
+      "rateName": "18 Holes",
+      "singlePlayerPrice": {
+       "greensFees": {
+        "value": 58.86
+       }
+      }
+     }
+    ]
+   },
+   {
+    "time": {
+     "date": "2026-10-31T14:10:00+00:00",
+     "formatted": "2:10",
+     "formattedTimeMeridian": "PM",
+     "subscriptFormattedTimeMeridian": "<sup>PM</sup>"
+    },
+    "playerRule": "TwoThreeFour",
+    "detailUrl": "/tee-times/facility/5741/tee-time/344191269",
+    "teeTimeRates": [
+     {
+      "holeCount": 18,
+      "playerRule": "TwoThreeFour",
+      "detailUrl": "/tee-times/facility/5741/tee-time/344191269",
+      "rateName": "18 Holes",
+      "singlePlayerPrice": {
+       "greensFees": {
+        "value": 58.86
+       }
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

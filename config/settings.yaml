@@ -1,0 +1,14 @@
+# What to look for. The dashboard can narrow these further; alerts use them as-is.
+search:
+  days_ahead: 8            # how many days out to check, today included
+  players: 2               # slot must allow at least this many players
+  days: [sat, sun]         # days of week to alert on: mon tue wed thu fri sat sun
+  time_windows:            # local tee times to alert on, "HH:MM" 24h
+    - ["06:30", "11:00"]
+
+alerts:
+  # Recipient comes from the ALERT_TO environment variable (GitHub Actions secret).
+  # SMTP credentials come from the SMTP_USER / SMTP_PASSWORD environment variables
+  # (GitHub Actions secrets). With a Gmail account, use an app password.
+  smtp_host: smtp.gmail.com
+  smtp_port: 465
